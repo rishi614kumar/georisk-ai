@@ -362,7 +362,7 @@ cat_to_ds = {
         "NYC OpenData Motor Vehicle Collisions",
         "Crime",
         "Street Construction Permits",
-        "MTA subway and other underground train lines"
+        "MTA subway and other underground train lines",
         "Street Pavement Rating",
     ],
     "Public Safety & Social Context": [
