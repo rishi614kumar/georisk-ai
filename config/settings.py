@@ -401,26 +401,83 @@ MAIN_CATS = list(cat_to_ds.keys())
 ALL_DATASETS = sorted({name for names in cat_to_ds.values() for name in names})
 
 #Dataset Geo Config
+#
+# This section defines **how each dataset is spatially filtered** when answering a query.
+# Each dataset declares a `geo_unit`, which determines how geographic constraints
+# (derived from user-provided addresses) are converted into Socrata / SQL-style filters.
+#
+# --------------------
+# Supported geo_unit types
+# --------------------
+#
+# - BBL
+#   Use NYC tax lot identifiers (BBL) directly.
+#   Suitable for datasets indexed by tax lot.
+#
+# - BBL_SPLIT
+#   Split BBL into (borough, block, lot) components.
+#   Used when datasets store lot identifiers in separate columns.
+#
+# - PRECINCT
+#   Convert BBLs into NYPD precinct IDs.
+#   Used for crime and public safety datasets aggregated at precinct level.
+#
+# - BOROUGH
+#   Convert BBLs into borough-level identifiers.
+#   Used for datasets aggregated by borough or community district.
+#
+# - NTA / NTA Code
+#   Convert BBLs into Neighborhood Tabulation Area (NTA) codes.
+#   Used for demographic datasets.
+#
+# - LONLAT
+#   Convert BBLs into longitude/latitude coordinates.
+#   Used for point-based spatial datasets and radius-based filtering.
+#
+# - STREETSPAN
+#   Resolve street segment IDs between two intersections.
+#   Used for datasets indexed by street segments (e.g., traffic counts).
+#
+# --------------------
+# Other configuration fields
+# --------------------
+#
+# - mode
+#   "street"  → exact street / parcel–based filtering
+#   "radius"  → radius-based spatial filtering
+#
+# - surrounding
+#   Whether to include surrounding parcels / units (True) or only the target location (False)
+#
+# - Borough / Borough_form
+#   Controls how borough codes are represented when splitting BBLs
+#
+# - cols / col_names
+#   Column mappings for datasets that do not follow standard naming conventions
+#
+# NOTE:
+# These settings are consumed by GeoScope to automatically construct dataset-specific
+# spatial WHERE clauses without hardcoding logic per dataset.
 DATASET_CONFIG = {
     "Asbestos Control Program": {"geo_unit": "BBL", "mode": "street", "surrounding":True},
     "Crime": {"geo_unit": "PRECINCT", "mode": "street","surrounding":False},
     "Sewer System Data": {"geo_unit": "", "mode": "radius","surrounding":False},
-    "Clean Air Tracking System (CATS)": {"geo_unit": "BBL_SPLIT","Borough":"M", "cols": {"block": "00853", "lot": "0002"},"mode": "radius","surrounding":True},
+    "Clean Air Tracking System (CATS)": {"geo_unit": "BBL_SPLIT","Borough":"M", "cols": {"block": "00853", "lot": "0002"},"mode": "radius","surrounding":True}, # "M" means Manhattan, tell whether the borough is digit or string
     "Population by Community Districts": {"geo_unit": "BOROUGH","Borough":"M", "Borough_form":1,"mode": "street","surrounding":False},
     "Population by Neighborhood Tabulation Area": {"geo_unit": "NTA Code", "mode": "street","surrounding":False},
-    "DOB permits": {"geo_unit": "BBL_SPLIT","Borough":"M","Borough_form":0,"cols": {"block": "00853", "lot": "00002"},"mode": "street","surrounding":True},
+    "DOB permits": {"geo_unit": "BBL_SPLIT","Borough":"M","Borough_form":0,"cols": {"block": "00853", "lot": "00002"},"mode": "street","surrounding":True}, # "00853" shows block with leading zeros, borugh_form 0 means borough is "MANHATTAN", 1 means "Manhattan"
     "DOB NOW: Build - Job Application Findings": {"geo_unit": "BBL","mode": "street","surrounding":True},
     "NYC OpenData Zoning and Tax Lot Database": {"geo_unit": "BBL","mode": "radius","surrounding":True},
     "City Owned and Leased Property": {"geo_unit": "BBL","mode": "radius","surrounding":True},
     "Water and Sewer Permits": {"geo_unit": "BBL_SPLIT","Borough":"M","Borough_form":1,"cols": {"block": "00853", "lot": "0002"},"col_names":{"borough": "propertyborough","block": "propertyblock", "lot":"propertylot"},"mode": "street","surrounding":True},
     "NYC OpenData Motor Vehicle Collisions": {"geo_unit": "LONLAT","col_names":{"geometry":"location"},"mode": "street","surrounding":True},
-    "Digital City Map Shapefile": {"geo_unit": "LONLAT","col_names":{"geometry":"the_geom"},"mode": "radius","surrounding":False},
+    "Digital City Map Shapefile": {"geo_unit": "LONLAT","col_names":{"geometry":"the_geom"},"mode": "radius","surrounding":False}, # col_name "the_geom" is the name of geometry column in the dataset
     "Historic Districts map" : {"geo_unit": "LONLAT","col_names":{"geometry":"the_geom"},"mode": "radius","surrounding":False},
     "MTA subway and other underground train lines": {"geo_unit": "LONLAT","col_names":{"geometry":"georeference"},"mode": "radius","surrounding":False},
     "Citywide Catch Basins": {"geo_unit": "LONLAT","col_names":{"geometry":"the_geom"},"mode": "radius","surrounding":False},
     "Citywide Hydrants": {"geo_unit": "LONLAT","col_names":{"geometry":"the_geom"},"mode": "radius","surrounding":False},
     "Street Pavement Rating": {"geo_unit": "LONLAT","col_names":{"geometry":"the_geom"},"mode": "radius","surrounding":False},
-    "NYC OpenData Automated Traffic Volume Counts": {"geo_unit": "STREETSPAN","mode": "street","surrounding":False}
+    "NYC OpenData Automated Traffic Volume Counts": {"geo_unit": "STREETSPAN","mode": "street","surrounding":False} 
     # Add more dataset configurations as needed
 }
 
