@@ -259,14 +259,16 @@ To add a dataset, make sure all four are complete:
 - Category mapping updated (cat_to_ds)
 
 
-## Limitations
+## Known Issues
+
+During our evaluation and after our code freeze, we identified the following issues:
 
 - **Initial Interaction Requirement**  
   Users must wait for the first response from **GeoRisk AI** before continuing the conversation.  
   The system requires an initialized conversational context to function correctly.
 
 - **Multiple Address Handling**  
-  When a user inputs **two or more addresses**, `GeoScope` currently applies
+  When a user inputs **two or more addresses**, `GeoScope` sometimes applies
   spatial filtering **only to the first resolved address**.
 
 - **Ambiguous or Incomplete Address Parsing**  
