@@ -284,8 +284,8 @@ During our evaluation and after our code freeze, we identified the following iss
   The `within_circle` spatial filter currently uses a **static radius of 100 meters**.  
   User-specified radius values are **not yet supported**.
 
-  - **NTA Data Inconsistency**  
-  Conversions from BBL to NTA are available, however, the converted NTA values do not always line up with the NTA values provided in the Population by NTA dataset.
+- **NTA Data Inconsistency**  
+Conversions from BBL to NTA are available, however, the converted NTA values do not always line up with the NTA values provided in the Population by NTA dataset.
 
 - **GeoClient Address Range Errors**  
   Some valid NYC addresses (e.g.,  
