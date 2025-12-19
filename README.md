@@ -1,6 +1,8 @@
 # GeoRisk AI
 An Agentic Geospatial AI Chatbot for Autonomous Multi-Domain Urban Risk Analysis in NYC.
 
+Further details are available in our [Final Report](https://github.com/rishi614kumar/georisk-ai/blob/main/Team17%20Final%20Report.pdf).
+
 ## Setup Instructions
 
 ### Prerequisites
@@ -28,7 +30,7 @@ An Agentic Geospatial AI Chatbot for Autonomous Multi-Domain Urban Risk Analysis
    CHAINLIT_DB_URL=sqlite+aiosqlite:///./chainlit_history.db
    ```
 
-   Download the crime data XLS from: [NYPD Historical Crime Data – Seven Major Felony Offenses by Precinct (2000–2024)](https://www.nyc.gov/assets/nypd/downloads/excel/analysis_and_planning/historical-crime-data/seven-major-felony-offenses-by-precinct-2000-2024.xls)
+   The crime data XLS file is already included in the modified_dataset folder. Sourced from: [NYPD Historical Crime Data – Seven Major Felony Offenses by Precinct (2000–2024)](https://www.nyc.gov/assets/nypd/downloads/excel/analysis_and_planning/historical-crime-data/seven-major-felony-offenses-by-precinct-2000-2024.xls)
 
    Replace the placeholders (e.g., `<your_geoclient_api_key>`) with the actual values for your environment.
 
@@ -281,6 +283,9 @@ During our evaluation and after our code freeze, we identified the following iss
 - **Radius Filtering Limitation**  
   The `within_circle` spatial filter currently uses a **static radius of 100 meters**.  
   User-specified radius values are **not yet supported**.
+
+  - **NTA Data Inconsistency**  
+  Conversions from BBL to NTA are available, however, the converted NTA values do not always line up with the NTA values provided in the Population by NTA dataset.
 
 - **GeoClient Address Range Errors**  
   Some valid NYC addresses (e.g.,  
