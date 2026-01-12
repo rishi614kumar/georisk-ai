@@ -5,6 +5,7 @@ import time
 from typing import List, Optional, Dict, Any, Protocol
 from dotenv import load_dotenv
 from config.logger import logger
+from openai import AzureOpenAI
 
 load_dotenv()
 
@@ -141,8 +142,77 @@ class GeminiBackend(ChatBackend):
 # ---------- Future stubs (OpenAI/Anthropic) ----------
 # You can implement these later without changing the rest of your app.
 
-class OpenAIBackend(ChatBackend):
-    def __init__(self, **kwargs): raise NotImplementedError
+class AzureOpenAIBackend(ChatBackend):
+    """
+    Requires: pip install azure-openai (or openai>=1.x)
+    Env:
+      AZURE_OPENAI_ENDPOINT
+      AZURE_OPENAI_API_KEY
+      AZURE_OPENAI_DEPLOYMENT  (deployment name for chat)
+      AZURE_OPENAI_API_VERSION (e.g., 2024-07-01-preview)
+    """
+    def __init__(
+        self,
+        api_key: Optional[str] = None,
+        endpoint: Optional[str] = None,
+        deployment: Optional[str] = None,
+        api_version: Optional[str] = None,
+        **kwargs,
+    ):
+        self._api_key = api_key or os.getenv("AZURE_OPENAI_API_KEY")
+        self._endpoint = endpoint or os.getenv("AZURE_OPENAI_ENDPOINT")
+        self._deployment = deployment or os.getenv("AZURE_OPENAI_DEPLOYMENT")
+        self._api_version = api_version or os.getenv("AZURE_OPENAI_API_VERSION", "2024-07-01-preview")
+        if not (self._api_key and self._endpoint and self._deployment):
+            raise ValueError("Missing Azure OpenAI configuration (endpoint/key/deployment).")
+        self._client = AzureOpenAI(
+            api_key=self._api_key,
+            azure_endpoint=self._endpoint,
+            api_version=self._api_version,
+        )
+        self._history = []
+
+    def start(self, system_instruction: Optional[str] = None,
+              history: Optional[List[Dict[str, Any]]] = None) -> None:
+        self._history = history or []
+        self._system_instruction = system_instruction
+
+    def send(self, message: str, max_retries: int = 3) -> str:
+        last_err = None
+        for attempt in range(max_retries + 1):
+            try:
+                # Compose messages with optional system prompt on first call
+                messages = []
+                if getattr(self, "_system_instruction", None):
+                    messages.append({"role": "system", "content": self._system_instruction})
+                messages.extend(self._history)
+                messages.append({"role": "user", "content": message})
+
+                resp = self._client.chat.completions.create(
+                    model=self._deployment,  # deployment name acts as model here
+                    messages=messages,
+                )
+                content = resp.choices[0].message.content if resp and resp.choices else ""
+                # Track history for continuity
+                self._history.append({"role": "user", "content": message})
+                self._history.append({"role": "assistant", "content": content})
+                return content or ""
+            except Exception as e:
+                last_err = e
+                if attempt < max_retries:
+                    wait = 2 ** attempt
+                    logger.warning(f"Azure OpenAI send failed (attempt {attempt+1}), retrying in {wait}s: {e}")
+                    time.sleep(wait)
+                    continue
+                raise
+
+    def history(self) -> List[Dict[str, Any]]:
+        return list(self._history)
+
+    def reset(self) -> None:
+        self._history = []
+
+
 
 class AnthropicBackend(ChatBackend):
     def __init__(self, **kwargs): raise NotImplementedError
@@ -171,8 +241,8 @@ def make_backend(provider: Optional[str] = None,
 
     if p == "gemini":
         return GeminiBackend(model_name=m, **kwargs)
-    if p == "openai":
-        return OpenAIBackend(model_name=m or "gpt-4o-mini", **kwargs)
+    if p == "azure":
+        return AzureOpenAIBackend(model_name=m or "gpt-4o-mini", **kwargs)
     if p == "anthropic":
         return AnthropicBackend(model_name=m or "claude-3-5-sonnet-latest", **kwargs)
     raise ValueError(f"Unsupported provider: {p}")

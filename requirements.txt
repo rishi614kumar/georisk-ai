@@ -13,3 +13,4 @@ SQLAlchemy>=2.0
 aiosqlite
 greenlet
 duckdb
+openai

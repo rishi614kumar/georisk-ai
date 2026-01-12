@@ -11,7 +11,7 @@ from scripts.ConversationalAgent import ConversationalAgent
 from config.settings import CHATBOT_TYPEWRITER_DELAY
 
 # LLM for conversational response
-llm_chat = Chat(make_backend(provider="gemini"))
+llm_chat = Chat(make_backend(provider="azure"))
 # Persistent agent instance
 agent = ConversationalAgent(chat_backend=llm_chat)
 
