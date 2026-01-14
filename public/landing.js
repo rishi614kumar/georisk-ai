@@ -52,7 +52,7 @@
 
     // Decorative crown
     const deco = document.createElement("div");
-    deco.textContent = "♕";
+    deco.textContent = "NYC DDC";
     deco.style.position = "absolute";
     deco.style.fontSize = "280px";
     deco.style.lineHeight = "1";
@@ -65,8 +65,8 @@
 
     // Logo
     const logo = document.createElement("img");
-    logo.src = "/public/columbia_logo.png";
-    logo.alt = "Columbia University Crown Logo";
+    logo.src = "/public/DDC_Logo.png";
+    logo.alt = "NYC DDC Logo";
     logo.style.width = "86px";
     logo.style.height = "86px";
     logo.style.objectFit = "contain";

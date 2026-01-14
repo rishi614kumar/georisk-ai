@@ -118,7 +118,7 @@ alert_style = "modern"
 # custom_js_attributes = "async type = \"module\""
 
 # Custom login page image, relative to public directory or external URL
-login_page_image = "/public/columbia_logo.png"
+login_page_image = "/public/DDC_Logo_2.png"
 
 # Custom login page image filter (Tailwind internal filters, no dark/light variants)
 # login_page_image_filter = "brightness-50 grayscale"
@@ -129,10 +129,10 @@ login_page_image = "/public/columbia_logo.png"
 # custom_meta_image_url = "https://chainlit-cloud.s3.eu-west-3.amazonaws.com/logo/chainlit_banner.png"
 
 # Load assistant logo directly from URL.
-logo_file_url = "/public/columbia_logo.png"
+logo_file_url = "/public/DDC_Logo.png"
 
 # Load assistant avatar image directly from URL.
-default_avatar_file_url = "/public/columbia_logo.png"
+default_avatar_file_url = "/public/DDC_Logo.png"
 
 # Specify a custom build directory for the frontend.
 # This can be used to customize the frontend code.

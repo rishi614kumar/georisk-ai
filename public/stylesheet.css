@@ -214,13 +214,13 @@ button[aria-label*="Light mode"] {
 }
 
 /* Small Columbia crown accent */
-.cl-header::before {
-  content: "♕";
+/* .cl-header::before {
+  content: ;
   color: var(--cu-deep);
   margin-right: .25rem;
   font-size: 1.1rem;
   transform: translateY(1px);
-}
+} */
 
 /* Optional landing return buttons */
 .cu-landing-return {
